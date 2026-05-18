@@ -28,16 +28,16 @@ import "../src/GameDAO.sol";
 ///   BASE_URI            – base URI for item metadata
 contract Deploy is Script {
     // ─── Protocol constants ───────────────────────────────────────────────────
-    uint256 constant MANA_COST_PER_LOOT = 10;        // MANA burned per loot roll
-    uint256 constant MANA_FEE_PER_CRAFT = 5;         // MANA burned per craft
-    uint256 constant TIMELOCK_DELAY     = 2 days;    // governance execution delay
-    uint256 constant GOV_SUPPLY         = 1_000_000e18; // RLM minted to admin
+    uint256 constant MANA_COST_PER_LOOT = 10; // MANA burned per loot roll
+    uint256 constant MANA_FEE_PER_CRAFT = 5; // MANA burned per craft
+    uint256 constant TIMELOCK_DELAY = 2 days; // governance execution delay
+    uint256 constant GOV_SUPPLY = 1_000_000e18; // RLM minted to admin
 
     function run() external {
-        address admin    = vm.envAddress("ADMIN_ADDRESS");
+        address admin = vm.envAddress("ADMIN_ADDRESS");
         address vrfCoord = vm.envAddress("VRF_COORDINATOR");
-        uint256 subId    = vm.envUint("VRF_SUBSCRIPTION_ID");
-        bytes32 keyHash  = vm.envBytes32("VRF_KEY_HASH");
+        uint256 subId = vm.envUint("VRF_SUBSCRIPTION_ID");
+        bytes32 keyHash = vm.envBytes32("VRF_KEY_HASH");
         address treasury = vm.envAddress("TREASURY_ADDRESS");
         string memory baseUri = vm.envString("BASE_URI");
 
@@ -49,16 +49,13 @@ contract Deploy is Script {
         // 2. Governance token + Timelock + Governor.
         RealmToken token = new RealmToken(admin);
         address[] memory empty = new address[](0);
-        TimelockController timelock =
-            new TimelockController(TIMELOCK_DELAY, empty, empty, admin);
+        TimelockController timelock = new TimelockController(TIMELOCK_DELAY, empty, empty, admin);
         GameDAO dao = new GameDAO(IVotes(address(token)), timelock);
 
         // 3. Game systems — privileged setters owned by the Timelock (the DAO).
-        LootVRF loot =
-            new LootVRF(vrfCoord, address(items), subId, keyHash, MANA_COST_PER_LOOT, address(timelock));
+        LootVRF loot = new LootVRF(vrfCoord, address(items), subId, keyHash, MANA_COST_PER_LOOT, address(timelock));
         ResourceAMM amm = new ResourceAMM(address(items), treasury, address(timelock));
-        CraftingEngine crafting =
-            new CraftingEngine(address(items), address(timelock), MANA_FEE_PER_CRAFT);
+        CraftingEngine crafting = new CraftingEngine(address(items), address(timelock), MANA_FEE_PER_CRAFT);
         NFTRentalVault rental = new NFTRentalVault(address(items), address(timelock));
 
         // 4. Wire GameItems roles: LootVRF + CraftingEngine mint/burn items.

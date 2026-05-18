@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 /// @notice A player guild — a lightweight membership contract deployed once per
 ///         guild by GuildFactory (via CREATE or CREATE2).
 contract Guild {
-    string  public name;
+    string public name;
     address public leader;
     address public immutable factory;
     uint256 public memberCount;
@@ -23,8 +23,8 @@ contract Guild {
 
     constructor(string memory name_, address leader_) {
         require(leader_ != address(0), "Guild: zero leader");
-        name    = name_;
-        leader  = leader_;
+        name = name_;
+        leader = leader_;
         factory = msg.sender;
         isMember[leader_] = true;
         memberCount = 1;

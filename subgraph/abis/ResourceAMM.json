@@ -1,0 +1,35 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "uint256", "name": "tokenA", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "tokenB", "type": "uint256" }
+    ],
+    "name": "PoolCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "bytes32", "name": "key", "type": "bytes32" },
+      { "indexed": true, "internalType": "address", "name": "trader", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "tokenIn", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "amountIn", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "amountOut", "type": "uint256" }
+    ],
+    "name": "Swapped",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "bytes32", "name": "key", "type": "bytes32" },
+      { "indexed": true, "internalType": "address", "name": "provider", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "amtA", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "amtB", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "shares", "type": "uint256" }
+    ],
+    "name": "LiquidityAdded",
+    "type": "event"
+  }
+]

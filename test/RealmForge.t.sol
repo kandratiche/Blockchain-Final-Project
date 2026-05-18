@@ -9,9 +9,9 @@ import "../src/ResourceAMM.sol";
 ///         LootVRF requires a live VRF coordinator mock — see test/LootVRFMock.t.sol.
 contract GameItemsTest is Test {
     GameItems items;
-    address admin   = address(0xA0);
-    address alice   = address(0xA1);
-    address minter  = address(0xA2);
+    address admin = address(0xA0);
+    address alice = address(0xA1);
+    address minter = address(0xA2);
 
     uint256 IRON;
     uint256 WOOD;
@@ -82,10 +82,10 @@ contract ResourceAMMTest is Test {
     GameItems items;
     ResourceAMM amm;
 
-    address admin    = address(0xB0);
+    address admin = address(0xB0);
     address treasury = address(0xB1);
-    address lp       = address(0xB2);
-    address trader   = address(0xB3);
+    address lp = address(0xB2);
+    address trader = address(0xB3);
 
     uint256 IRON;
     uint256 WOOD;
@@ -93,7 +93,7 @@ contract ResourceAMMTest is Test {
     function setUp() public {
         vm.startPrank(admin);
         items = new GameItems(admin, "https://api.realmforge.io/meta/");
-        amm   = new ResourceAMM(address(items), treasury, admin);
+        amm = new ResourceAMM(address(items), treasury, admin);
 
         items.grantRole(items.MINTER_ROLE(), admin);
         items.grantRole(items.BURNER_ROLE(), address(amm));
@@ -101,8 +101,8 @@ contract ResourceAMMTest is Test {
         IRON = items.IRON();
         WOOD = items.WOOD();
 
-        items.mintResource(lp,     IRON, 10_000);
-        items.mintResource(lp,     WOOD, 10_000);
+        items.mintResource(lp, IRON, 10_000);
+        items.mintResource(lp, WOOD, 10_000);
         items.mintResource(trader, IRON, 1_000);
         vm.stopPrank();
 

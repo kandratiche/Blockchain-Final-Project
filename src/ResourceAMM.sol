@@ -13,12 +13,11 @@ import "./GameItems.sol";
 ///         Swap fees accrue to a DAO treasury address.
 ///         Fee rate and treasury are DAO-settable (owner).
 contract ResourceAMM is Ownable, ERC1155Holder {
-
     // ─── External contracts ───────────────────────────────────────────────────
     GameItems public immutable items;
 
     // ─── Fee config ───────────────────────────────────────────────────────────
-    uint256 public feeBps = 30;       // 0.30 % default
+    uint256 public feeBps = 30; // 0.30 % default
     address public treasury;
 
     // ─── Pool storage ─────────────────────────────────────────────────────────
@@ -39,25 +38,18 @@ contract ResourceAMM is Ownable, ERC1155Holder {
     event Swapped(bytes32 indexed key, address indexed trader, uint256 tokenIn, uint256 amountIn, uint256 amountOut);
     event FeeUpdated(uint256 newFeeBps);
 
-    constructor(address itemsContract_, address treasury_, address admin_)
-        Ownable(admin_)
-    {
-        items    = GameItems(itemsContract_);
+    constructor(address itemsContract_, address treasury_, address admin_) Ownable(admin_) {
+        items = GameItems(itemsContract_);
         treasury = treasury_;
     }
 
     // ─── View helpers ─────────────────────────────────────────────────────────
     function poolKey(uint256 tA, uint256 tB) public pure returns (bytes32) {
         require(tA != tB, "AMM: same token");
-        return tA < tB
-            ? keccak256(abi.encode(tA, tB))
-            : keccak256(abi.encode(tB, tA));
+        return tA < tB ? keccak256(abi.encode(tA, tB)) : keccak256(abi.encode(tB, tA));
     }
 
-    function getReserves(uint256 tA, uint256 tB)
-        external view
-        returns (uint256 rA, uint256 rB)
-    {
+    function getReserves(uint256 tA, uint256 tB) external view returns (uint256 rA, uint256 rB) {
         (uint256 lo, uint256 hi) = tA < tB ? (tA, tB) : (tB, tA);
         Pool storage p = pools[keccak256(abi.encode(lo, hi))];
         (rA, rB) = (p.reserveA, p.reserveB);
@@ -67,14 +59,12 @@ contract ResourceAMM is Ownable, ERC1155Holder {
     /// @notice Deposit amtA of tokenA and amtB of tokenB into the pool.
     ///         On first deposit the ratio is set freely.
     ///         On subsequent deposits amtB is adjusted to maintain current ratio.
-    function addLiquidity(
-        uint256 tokenA, uint256 amtA,
-        uint256 tokenB, uint256 amtB
-    ) external returns (uint256 shares) {
+    function addLiquidity(uint256 tokenA, uint256 amtA, uint256 tokenB, uint256 amtB)
+        external
+        returns (uint256 shares)
+    {
         (uint256 lo, uint256 hi, uint256 loAmt, uint256 hiAmt) =
-            tokenA < tokenB
-                ? (tokenA, tokenB, amtA, amtB)
-                : (tokenB, tokenA, amtB, amtA);
+            tokenA < tokenB ? (tokenA, tokenB, amtA, amtB) : (tokenB, tokenA, amtB, amtA);
 
         bytes32 key = keccak256(abi.encode(lo, hi));
         Pool storage p = pools[key];
@@ -125,8 +115,8 @@ contract ResourceAMM is Ownable, ERC1155Holder {
         amtA = (shares * p.reserveA) / p.totalShares;
         amtB = (shares * p.reserveB) / p.totalShares;
 
-        p.reserveA    -= amtA;
-        p.reserveB    -= amtB;
+        p.reserveA -= amtA;
+        p.reserveB -= amtB;
         p.totalShares -= shares;
         lpBalance[key][msg.sender] -= shares;
 
@@ -138,21 +128,17 @@ contract ResourceAMM is Ownable, ERC1155Holder {
 
     // ─── Swap ─────────────────────────────────────────────────────────────────
     /// @notice Swap `amountIn` of `tokenIn` for the other token in the pair.
-    function swap(
-        uint256 tokenIn,
-        uint256 tokenOut,
-        uint256 amountIn,
-        uint256 minAmountOut
-    ) external returns (uint256 amountOut) {
+    function swap(uint256 tokenIn, uint256 tokenOut, uint256 amountIn, uint256 minAmountOut)
+        external
+        returns (uint256 amountOut)
+    {
         (uint256 lo, uint256 hi) = tokenIn < tokenOut ? (tokenIn, tokenOut) : (tokenOut, tokenIn);
         bytes32 key = keccak256(abi.encode(lo, hi));
         Pool storage p = pools[key];
         require(p.reserveA > 0 && p.reserveB > 0, "AMM: empty pool");
 
         bool inIsLo = tokenIn == lo;
-        (uint256 rIn, uint256 rOut) = inIsLo
-            ? (p.reserveA, p.reserveB)
-            : (p.reserveB, p.reserveA);
+        (uint256 rIn, uint256 rOut) = inIsLo ? (p.reserveA, p.reserveB) : (p.reserveB, p.reserveA);
 
         // Apply fee: amountInWithFee = amountIn * (10000 - feeBps)
         uint256 amountInAfterFee = amountIn * (10_000 - feeBps);
@@ -183,10 +169,7 @@ contract ResourceAMM is Ownable, ERC1155Holder {
     }
 
     // ─── Quote helper ─────────────────────────────────────────────────────────
-    function quoteOut(uint256 tokenIn, uint256 tokenOut, uint256 amountIn)
-        external view
-        returns (uint256 amountOut)
-    {
+    function quoteOut(uint256 tokenIn, uint256 tokenOut, uint256 amountIn) external view returns (uint256 amountOut) {
         (uint256 lo, uint256 hi) = tokenIn < tokenOut ? (tokenIn, tokenOut) : (tokenOut, tokenIn);
         Pool storage p = pools[keccak256(abi.encode(lo, hi))];
         bool inIsLo = tokenIn == lo;
@@ -208,10 +191,7 @@ contract ResourceAMM is Ownable, ERC1155Holder {
     }
 
     // ─── ERC1155Holder override ───────────────────────────────────────────────
-    function supportsInterface(bytes4 interfaceId)
-        public view override(ERC1155Holder)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC1155Holder) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
@@ -220,7 +200,8 @@ contract ResourceAMM is Ownable, ERC1155Holder {
         if (y > 3) {
             z = y;
             uint256 x = y / 2 + 1;
-            while (x < z) { z = x; x = (y / x + x) / 2; }
+            while (x < z) z = x;
+            x = (y / x + x) / 2;
         } else if (y != 0) {
             z = 1;
         }

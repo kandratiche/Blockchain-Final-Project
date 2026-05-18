@@ -18,10 +18,7 @@ import "@openzeppelin/contracts/utils/Nonces.sol";
 contract RealmToken is ERC20, ERC20Permit, ERC20Votes, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor(address admin)
-        ERC20("RealmForge Governance", "RLM")
-        ERC20Permit("RealmForge Governance")
-    {
+    constructor(address admin) ERC20("RealmForge Governance", "RLM") ERC20Permit("RealmForge Governance") {
         require(admin != address(0), "RLM: zero admin");
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(MINTER_ROLE, admin);
@@ -43,19 +40,11 @@ contract RealmToken is ERC20, ERC20Permit, ERC20Votes, AccessControl {
     }
 
     // ─── Required multiple-inheritance overrides ──────────────────────────────
-    function _update(address from, address to, uint256 value)
-        internal
-        override(ERC20, ERC20Votes)
-    {
+    function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Votes) {
         super._update(from, to, value);
     }
 
-    function nonces(address owner)
-        public
-        view
-        override(ERC20Permit, Nonces)
-        returns (uint256)
-    {
+    function nonces(address owner) public view override(ERC20Permit, Nonces) returns (uint256) {
         return super.nonces(owner);
     }
 }

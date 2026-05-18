@@ -10,8 +10,8 @@ import "../src/Guild.sol";
 contract GuildFactoryTest is Test {
     GuildFactory factory;
 
-    address leader  = address(0xA1);
-    address member  = address(0xA2);
+    address leader = address(0xA1);
+    address member = address(0xA2);
     address member2 = address(0xA3);
 
     function setUp() public {

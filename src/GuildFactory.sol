@@ -21,10 +21,7 @@ contract GuildFactory {
     error SaltAlreadyUsed();
 
     /// @notice Deploy a guild via CREATE — address depends on the factory nonce.
-    function createGuild(string calldata name, address leader)
-        external
-        returns (address guild)
-    {
+    function createGuild(string calldata name, address leader) external returns (address guild) {
         guild = address(new Guild(name, leader));
         allGuilds.push(guild);
         emit GuildCreated(guild, leader, false);
@@ -51,11 +48,8 @@ contract GuildFactory {
         view
         returns (address predicted)
     {
-        bytes memory initCode =
-            abi.encodePacked(type(Guild).creationCode, abi.encode(name, leader));
-        bytes32 hash = keccak256(
-            abi.encodePacked(bytes1(0xff), address(this), salt, keccak256(initCode))
-        );
+        bytes memory initCode = abi.encodePacked(type(Guild).creationCode, abi.encode(name, leader));
+        bytes32 hash = keccak256(abi.encodePacked(bytes1(0xff), address(this), salt, keccak256(initCode)));
         predicted = address(uint160(uint256(hash)));
     }
 

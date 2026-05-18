@@ -1,0 +1,23 @@
+# Foundry
+out/
+cache/
+broadcast/
+!broadcast/**/run-latest.json
+
+# Env / secrets
+.env
+.env.local
+
+# Node / frontend / subgraph
+node_modules/
+frontend/dist/
+frontend/.vite/
+subgraph/generated/
+subgraph/build/
+
+# Coverage
+lcov.info
+coverage-summary.txt
+
+# OS
+.DS_Store

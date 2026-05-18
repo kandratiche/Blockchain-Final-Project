@@ -6,10 +6,7 @@ import "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 import "../src/PriceOracle.sol";
 
 interface IUniswapV2Router {
-    function getAmountsOut(uint256 amountIn, address[] calldata path)
-        external
-        view
-        returns (uint256[] memory amounts);
+    function getAmountsOut(uint256 amountIn, address[] calldata path) external view returns (uint256[] memory amounts);
 }
 
 /// @notice Fork tests against live Ethereum mainnet protocols. They require a
@@ -19,10 +16,10 @@ interface IUniswapV2Router {
 ///   MAINNET_RPC=https://eth.llamarpc.com forge test --match-path test/Fork.t.sol
 contract ForkTest is Test {
     // Mainnet addresses.
-    address constant USDC          = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    address constant WETH          = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address constant UNIV2_ROUTER  = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    address constant ETH_USD_FEED  = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
+    address constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address constant UNIV2_ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+    address constant ETH_USD_FEED = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
 
     /// @dev Selects a mainnet fork, or skips the calling test if no RPC is set.
     function _fork() internal returns (bool) {
@@ -49,8 +46,7 @@ contract ForkTest is Test {
         address[] memory path = new address[](2);
         path[0] = WETH;
         path[1] = USDC;
-        uint256[] memory amounts =
-            IUniswapV2Router(UNIV2_ROUTER).getAmountsOut(1 ether, path);
+        uint256[] memory amounts = IUniswapV2Router(UNIV2_ROUTER).getAmountsOut(1 ether, path);
         assertEq(amounts.length, 2);
         assertGt(amounts[1], 0, "1 WETH must quote to some USDC");
     }

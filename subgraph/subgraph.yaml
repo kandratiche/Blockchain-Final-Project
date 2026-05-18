@@ -1,0 +1,103 @@
+specVersion: 1.0.0
+description: RealmForge GameFi economy — AMM, crafting, rentals, governance.
+repository: https://github.com/realmforge/realmforge
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ResourceAMM
+    network: arbitrum-sepolia
+    source:
+      # Replace with the verified ResourceAMM address after deployment.
+      address: "0x0000000000000000000000000000000000000000"
+      abi: ResourceAMM
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Pool
+        - Swap
+        - Player
+      abis:
+        - name: ResourceAMM
+          file: ./abis/ResourceAMM.json
+      eventHandlers:
+        - event: PoolCreated(uint256,uint256)
+          handler: handlePoolCreated
+        - event: Swapped(indexed bytes32,indexed address,uint256,uint256,uint256)
+          handler: handleSwapped
+        - event: LiquidityAdded(indexed bytes32,indexed address,uint256,uint256,uint256)
+          handler: handleLiquidityAdded
+  - kind: ethereum
+    name: CraftingEngine
+    network: arbitrum-sepolia
+    source:
+      address: "0x0000000000000000000000000000000000000000"
+      abi: CraftingEngine
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Craft
+        - Player
+      abis:
+        - name: CraftingEngine
+          file: ./abis/CraftingEngine.json
+      eventHandlers:
+        - event: Crafted(indexed address,indexed uint256,uint256)
+          handler: handleCrafted
+  - kind: ethereum
+    name: NFTRentalVault
+    network: arbitrum-sepolia
+    source:
+      address: "0x0000000000000000000000000000000000000000"
+      abi: NFTRentalVault
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Rental
+        - Player
+      abis:
+        - name: NFTRentalVault
+          file: ./abis/NFTRentalVault.json
+      eventHandlers:
+        - event: Listed(indexed uint256,indexed address,uint256,uint64)
+          handler: handleListed
+        - event: Rented(indexed uint256,indexed address,uint64,uint256)
+          handler: handleRented
+  - kind: ethereum
+    name: GameDAO
+    network: arbitrum-sepolia
+    source:
+      address: "0x0000000000000000000000000000000000000000"
+      abi: GameDAO
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Proposal
+        - Vote
+        - Player
+      abis:
+        - name: GameDAO
+          file: ./abis/GameDAO.json
+      eventHandlers:
+        - event: ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)
+          handler: handleProposalCreated
+        - event: VoteCast(indexed address,uint256,uint8,uint256,string)
+          handler: handleVoteCast
+        - event: ProposalExecuted(uint256)
+          handler: handleProposalExecuted

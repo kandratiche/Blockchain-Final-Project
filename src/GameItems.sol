@@ -13,8 +13,8 @@ contract GameItems is ERC1155, AccessControl {
     using Strings for uint256;
 
     // ─── Roles ───────────────────────────────────────────────────────────────
-    bytes32 public constant MINTER_ROLE  = keccak256("MINTER_ROLE");
-    bytes32 public constant BURNER_ROLE  = keccak256("BURNER_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
     // ─── Token IDs ────────────────────────────────────────────────────────────
     uint256 public constant IRON = 1;
@@ -30,8 +30,8 @@ contract GameItems is ERC1155, AccessControl {
 
     // ─── Equipment registry ───────────────────────────────────────────────────
     struct Equipment {
-        string  name;
-        uint8   tier;      // 1 common → 5 legendary
+        string name;
+        uint8 tier; // 1 common → 5 legendary
         uint256 power;
     }
     mapping(uint256 => Equipment) public equipment;
@@ -49,10 +49,7 @@ contract GameItems is ERC1155, AccessControl {
 
     // ─── Mint resources ───────────────────────────────────────────────────────
     /// @notice Mint fungible resource tokens. Called by LootVRF or admin.
-    function mintResource(address to, uint256 tokenId, uint256 amount)
-        external
-        onlyRole(MINTER_ROLE)
-    {
+    function mintResource(address to, uint256 tokenId, uint256 amount) external onlyRole(MINTER_ROLE) {
         require(tokenId >= 1 && tokenId <= 3, "GameItems: not a resource");
         _mint(to, tokenId, amount, "");
         emit ResourcesMinted(to, tokenId, amount);
@@ -60,23 +57,19 @@ contract GameItems is ERC1155, AccessControl {
 
     // ─── Mint equipment NFT ───────────────────────────────────────────────────
     /// @notice Mint a unique equipment piece and register its metadata.
-    function mintEquipment(
-        address to,
-        string calldata equipName,
-        uint8  tier,
-        uint256 power
-    ) external onlyRole(MINTER_ROLE) returns (uint256 tokenId) {
+    function mintEquipment(address to, string calldata equipName, uint8 tier, uint256 power)
+        external
+        onlyRole(MINTER_ROLE)
+        returns (uint256 tokenId)
+    {
         tokenId = _nextEquipmentId++;
-        equipment[tokenId] = Equipment({ name: equipName, tier: tier, power: power });
+        equipment[tokenId] = Equipment({name: equipName, tier: tier, power: power});
         _mint(to, tokenId, 1, "");
         emit EquipmentRegistered(tokenId, equipName, tier);
     }
 
     // ─── Burn (called by CraftingEngine) ──────────────────────────────────────
-    function burn(address from, uint256 tokenId, uint256 amount)
-        external
-        onlyRole(BURNER_ROLE)
-    {
+    function burn(address from, uint256 tokenId, uint256 amount) external onlyRole(BURNER_ROLE) {
         _burn(from, tokenId, amount);
     }
 
@@ -97,10 +90,7 @@ contract GameItems is ERC1155, AccessControl {
     }
 
     // ─── Supports interface ───────────────────────────────────────────────────
-    function supportsInterface(bytes4 interfaceId)
-        public view override(ERC1155, AccessControl)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC1155, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

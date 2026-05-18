@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  contracts:
+    name: Build · Test · Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Show forge version
+        run: forge --version
+
+      - name: Check formatting
+        run: forge fmt --check
+
+      - name: Build
+        run: forge build --sizes
+
+      - name: Run tests
+        run: forge test --match-path 'test/*.t.sol' -vvv
+
+      - name: Coverage
+        run: |
+          forge coverage --match-path 'test/*.t.sol' --report summary --report lcov \
+            --no-match-coverage '(test|script)/' | tee coverage-summary.txt
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            lcov.info
+            coverage-summary.txt
+
+  slither:
+    name: Slither static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run Slither
+        uses: crytic/slither-action@v0.4.0
+        with:
+          fail-on: medium
+          slither-config: slither.config.json
+
+  lint-frontend:
+    name: Lint frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install & check formatting
+        working-directory: frontend
+        run: |
+          npm ci || npm install
+          npx prettier --check "src/**/*.{js,jsx,css}"

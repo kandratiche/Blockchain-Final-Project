@@ -24,12 +24,12 @@ contract CraftingEngine is AccessControl, ReentrancyGuard, Pausable {
 
     // ─── Recipe storage ───────────────────────────────────────────────────────
     struct Recipe {
-        uint256[] resourceIds;      // GameItems resource IDs (1-3) to burn
-        uint256[] resourceAmounts;  // amount of each resource to burn
-        string  outputName;         // name of the crafted equipment
-        uint8   outputTier;         // 1 common .. 5 legendary
-        uint256 outputPower;        // power stat of the crafted equipment
-        bool    exists;
+        uint256[] resourceIds; // GameItems resource IDs (1-3) to burn
+        uint256[] resourceAmounts; // amount of each resource to burn
+        string outputName; // name of the crafted equipment
+        uint8 outputTier; // 1 common .. 5 legendary
+        uint256 outputPower; // power stat of the crafted equipment
+        bool exists;
     }
 
     /// @dev Private — the public getter cannot return the dynamic arrays.
@@ -50,7 +50,7 @@ contract CraftingEngine is AccessControl, ReentrancyGuard, Pausable {
     /// @param manaFee_       initial flat MANA crafting fee
     constructor(address itemsContract_, address dao_, uint256 manaFee_) {
         require(itemsContract_ != address(0) && dao_ != address(0), "Crafting: zero address");
-        items   = GameItems(itemsContract_);
+        items = GameItems(itemsContract_);
         manaFee = manaFee_;
         _grantRole(DEFAULT_ADMIN_ROLE, dao_);
         _grantRole(DAO_ROLE, dao_);
@@ -140,12 +140,7 @@ contract CraftingEngine is AccessControl, ReentrancyGuard, Pausable {
     /// @notice Craft a recipe: burns the MANA fee + recipe inputs, mints output.
     /// @dev    Checks-Effects-Interactions — every state change is a burn/mint on
     ///         GameItems which is role-gated; nonReentrant added for defence.
-    function craft(uint256 recipeId)
-        external
-        nonReentrant
-        whenNotPaused
-        returns (uint256 equipmentTokenId)
-    {
+    function craft(uint256 recipeId) external nonReentrant whenNotPaused returns (uint256 equipmentTokenId) {
         Recipe storage r = _recipes[recipeId];
         require(r.exists, "Crafting: invalid recipe");
 
@@ -162,11 +157,10 @@ contract CraftingEngine is AccessControl, ReentrancyGuard, Pausable {
     }
 
     // ─── Internal ─────────────────────────────────────────────────────────────
-    function _validate(
-        uint256[] calldata resourceIds,
-        uint256[] calldata resourceAmounts,
-        uint8 outputTier
-    ) private pure {
+    function _validate(uint256[] calldata resourceIds, uint256[] calldata resourceAmounts, uint8 outputTier)
+        private
+        pure
+    {
         require(resourceIds.length == resourceAmounts.length, "Crafting: length mismatch");
         require(resourceIds.length > 0, "Crafting: empty recipe");
         require(outputTier >= 1 && outputTier <= 5, "Crafting: bad tier");

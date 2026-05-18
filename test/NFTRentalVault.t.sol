@@ -12,15 +12,15 @@ contract NFTRentalVaultTest is Test {
     GameItems items;
     NFTRentalVault vault;
 
-    address admin  = address(0xA0);
-    address owner  = address(0xE1);
+    address admin = address(0xA0);
+    address owner = address(0xE1);
     address renter = address(0xE2);
 
     uint256 MANA;
     uint256 equipId;
 
     uint256 constant PRICE_PER_DAY = 100;
-    uint64  constant MAX_DURATION  = 30;
+    uint64 constant MAX_DURATION = 30;
 
     function setUp() public {
         items = new GameItems(address(this), "https://api.realmforge.io/meta/");
@@ -52,7 +52,7 @@ contract NFTRentalVaultTest is Test {
         assertEq(items.balanceOf(address(vault), equipId), 1);
         assertEq(items.balanceOf(owner, equipId), 0);
 
-        (address o, uint256 p,, , , bool active) = vault.listings(equipId);
+        (address o, uint256 p,,,, bool active) = vault.listings(equipId);
         assertEq(o, owner);
         assertEq(p, PRICE_PER_DAY);
         assertTrue(active);
@@ -177,7 +177,7 @@ contract NFTRentalVaultTest is Test {
         vault.delist(equipId);
         assertEq(items.balanceOf(owner, equipId), 1);
 
-        (, , , , , bool active) = vault.listings(equipId);
+        (,,,,, bool active) = vault.listings(equipId);
         assertFalse(active);
     }
 

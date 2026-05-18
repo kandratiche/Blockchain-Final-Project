@@ -12,15 +12,15 @@ contract PriceOracleTest is Test {
     PriceOracle oracle;
     MockAggregator feed;
 
-    address admin    = address(0xA0);
+    address admin = address(0xA0);
     address outsider = address(0xB0);
 
     uint256 constant MAX_STALENESS = 1 hours;
-    int256  constant PRICE         = 2000e8; // $2000, 8 decimals
+    int256 constant PRICE = 2000e8; // $2000, 8 decimals
 
     function setUp() public {
         vm.warp(1_000_000);
-        feed   = new MockAggregator(8, PRICE);
+        feed = new MockAggregator(8, PRICE);
         oracle = new PriceOracle(address(feed), MAX_STALENESS, admin);
     }
 
@@ -42,10 +42,7 @@ contract PriceOracleTest is Test {
         vm.warp(block.timestamp + MAX_STALENESS + 1);
         vm.expectRevert(
             abi.encodeWithSelector(
-                PriceOracle.StalePrice.selector,
-                block.timestamp - MAX_STALENESS - 1,
-                block.timestamp,
-                MAX_STALENESS
+                PriceOracle.StalePrice.selector, block.timestamp - MAX_STALENESS - 1, block.timestamp, MAX_STALENESS
             )
         );
         oracle.getPrice();

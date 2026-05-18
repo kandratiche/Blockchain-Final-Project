@@ -1,0 +1,24 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "uint256", "name": "equipmentId", "type": "uint256" },
+      { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "pricePerDay", "type": "uint256" },
+      { "indexed": false, "internalType": "uint64", "name": "maxDuration", "type": "uint64" }
+    ],
+    "name": "Listed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "uint256", "name": "equipmentId", "type": "uint256" },
+      { "indexed": true, "internalType": "address", "name": "renter", "type": "address" },
+      { "indexed": false, "internalType": "uint64", "name": "expires", "type": "uint64" },
+      { "indexed": false, "internalType": "uint256", "name": "paid", "type": "uint256" }
+    ],
+    "name": "Rented",
+    "type": "event"
+  }
+]

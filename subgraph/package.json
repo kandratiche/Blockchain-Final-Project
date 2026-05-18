@@ -1,0 +1,17 @@
+{
+  "name": "realmforge-subgraph",
+  "version": "1.0.0",
+  "description": "The Graph subgraph indexing the RealmForge GameFi protocol.",
+  "license": "MIT",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ realmforge",
+    "create-local": "graph create --node http://localhost:8020/ realmforge",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 realmforge"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.80.0",
+    "@graphprotocol/graph-ts": "0.35.1"
+  }
+}

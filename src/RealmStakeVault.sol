@@ -15,10 +15,7 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 ///         classic first-depositor inflation attack. A non-zero decimals offset
 ///         hardens that further.
 contract RealmStakeVault is ERC4626 {
-    constructor(IERC20 asset_)
-        ERC20("Staked RealmForge", "xRLM")
-        ERC4626(asset_)
-    {}
+    constructor(IERC20 asset_) ERC20("Staked RealmForge", "xRLM") ERC4626(asset_) {}
 
     /// @dev Virtual decimals offset — strengthens inflation-attack resistance.
     function _decimalsOffset() internal pure override returns (uint8) {

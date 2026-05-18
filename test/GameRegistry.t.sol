@@ -13,14 +13,13 @@ contract GameRegistryTest is Test {
     GameRegistryV1 registry; // proxy, typed as V1
     address proxy;
 
-    address owner   = address(0xA0);
-    address player  = address(0xB0);
+    address owner = address(0xA0);
+    address player = address(0xB0);
     address player2 = address(0xB1);
 
     function setUp() public {
         GameRegistryV1 impl = new GameRegistryV1();
-        bytes memory initData =
-            abi.encodeCall(GameRegistryV1.initialize, (owner, 100));
+        bytes memory initData = abi.encodeCall(GameRegistryV1.initialize, (owner, 100));
         proxy = address(new ERC1967Proxy(address(impl), initData));
         registry = GameRegistryV1(proxy);
     }

@@ -20,11 +20,11 @@ contract GameDAOTest is Test {
     GameItems items;
     CraftingEngine crafting;
 
-    address voter   = address(0xF1);
-    address voter2  = address(0xF2);
+    address voter = address(0xF1);
+    address voter2 = address(0xF2);
 
-    uint256 constant SUPPLY    = 1_000_000e18; // total RLM minted
-    uint256 constant TL_DELAY  = 2 days;       // timelock minimum delay
+    uint256 constant SUPPLY = 1_000_000e18; // total RLM minted
+    uint256 constant TL_DELAY = 2 days; // timelock minimum delay
 
     function setUp() public {
         vm.warp(1_000_000); // sane starting timestamp for the token clock
@@ -47,7 +47,7 @@ contract GameDAOTest is Test {
         timelock.renounceRole(timelock.DEFAULT_ADMIN_ROLE(), address(this));
 
         // ── Protocol contract governed by the DAO ─────────────────────────
-        items    = new GameItems(address(this), "https://api.realmforge.io/meta/");
+        items = new GameItems(address(this), "https://api.realmforge.io/meta/");
         crafting = new CraftingEngine(address(items), address(timelock), 5);
 
         // ── Distribute voting power ───────────────────────────────────────
@@ -89,12 +89,8 @@ contract GameDAOTest is Test {
     function test_fullGovernanceLifecycle() public {
         uint256 newFee = 99;
 
-        (
-            address[] memory targets,
-            uint256[] memory values,
-            bytes[] memory calldatas,
-            string memory description
-        ) = _setManaFeeProposal(newFee);
+        (address[] memory targets, uint256[] memory values, bytes[] memory calldatas, string memory description) =
+            _setManaFeeProposal(newFee);
         bytes32 descHash = keccak256(bytes(description));
 
         // 1. Propose.
@@ -126,12 +122,8 @@ contract GameDAOTest is Test {
     }
 
     function test_proposal_defeatedOnAgainstVote() public {
-        (
-            address[] memory targets,
-            uint256[] memory values,
-            bytes[] memory calldatas,
-            string memory description
-        ) = _setManaFeeProposal(7);
+        (address[] memory targets, uint256[] memory values, bytes[] memory calldatas, string memory description) =
+            _setManaFeeProposal(7);
 
         vm.prank(voter);
         uint256 id = dao.propose(targets, values, calldatas, description);
@@ -151,12 +143,8 @@ contract GameDAOTest is Test {
         token.delegate(voter2);
         vm.warp(block.timestamp + 1);
 
-        (
-            address[] memory targets,
-            uint256[] memory values,
-            bytes[] memory calldatas,
-            string memory description
-        ) = _setManaFeeProposal(1);
+        (address[] memory targets, uint256[] memory values, bytes[] memory calldatas, string memory description) =
+            _setManaFeeProposal(1);
 
         vm.prank(voter2);
         vm.expectRevert();
@@ -164,12 +152,8 @@ contract GameDAOTest is Test {
     }
 
     function test_execute_revertsBeforeTimelockDelay() public {
-        (
-            address[] memory targets,
-            uint256[] memory values,
-            bytes[] memory calldatas,
-            string memory description
-        ) = _setManaFeeProposal(50);
+        (address[] memory targets, uint256[] memory values, bytes[] memory calldatas, string memory description) =
+            _setManaFeeProposal(50);
         bytes32 descHash = keccak256(bytes(description));
 
         vm.prank(voter);
@@ -189,12 +173,7 @@ contract GameDAOTest is Test {
     function _setManaFeeProposal(uint256 newFee)
         internal
         view
-        returns (
-            address[] memory targets,
-            uint256[] memory values,
-            bytes[] memory calldatas,
-            string memory description
-        )
+        returns (address[] memory targets, uint256[] memory values, bytes[] memory calldatas, string memory description)
     {
         targets = new address[](1);
         values = new uint256[](1);

@@ -24,12 +24,12 @@ contract NFTRentalVault is ReentrancyGuard, Pausable, Ownable, ERC1155Holder {
 
     // ─── Listing storage ──────────────────────────────────────────────────────
     struct Listing {
-        address owner;        // depositor / NFT owner
-        uint256 pricePerDay;  // rental price per day, in MANA units
-        uint64  maxDuration;  // maximum rentable duration, in days
-        address user;         // current renter (ERC-4907 `user`)
-        uint64  userExpires;  // unix timestamp the rental rights expire at
-        bool    active;       // true while the NFT is held by the vault
+        address owner; // depositor / NFT owner
+        uint256 pricePerDay; // rental price per day, in MANA units
+        uint64 maxDuration; // maximum rentable duration, in days
+        address user; // current renter (ERC-4907 `user`)
+        uint64 userExpires; // unix timestamp the rental rights expire at
+        bool active; // true while the NFT is held by the vault
     }
 
     /// @dev equipmentId => Listing. Equipment IDs are unique (supply 1).
@@ -49,16 +49,12 @@ contract NFTRentalVault is ReentrancyGuard, Pausable, Ownable, ERC1155Holder {
         require(itemsContract_ != address(0), "Rental: zero address");
         GameItems items_ = GameItems(itemsContract_);
         items = items_;
-        MANA  = items_.MANA();
+        MANA = items_.MANA();
     }
 
     // ─── Owner: list an equipment NFT ─────────────────────────────────────────
     /// @notice Deposit an equipment NFT into the vault and open it for rent.
-    function list(uint256 equipmentId, uint256 pricePerDay, uint64 maxDuration)
-        external
-        nonReentrant
-        whenNotPaused
-    {
+    function list(uint256 equipmentId, uint256 pricePerDay, uint64 maxDuration) external nonReentrant whenNotPaused {
         require(equipmentId >= 1000, "Rental: not equipment");
         require(maxDuration > 0, "Rental: zero duration");
         require(!listings[equipmentId].active, "Rental: already listed");
@@ -79,9 +75,7 @@ contract NFTRentalVault is ReentrancyGuard, Pausable, Ownable, ERC1155Holder {
     }
 
     /// @notice Update price / max duration of an idle listing.
-    function updateListing(uint256 equipmentId, uint256 pricePerDay, uint64 maxDuration)
-        external
-    {
+    function updateListing(uint256 equipmentId, uint256 pricePerDay, uint64 maxDuration) external {
         Listing storage l = listings[equipmentId];
         require(l.owner == msg.sender, "Rental: not owner");
         require(maxDuration > 0, "Rental: zero duration");
@@ -97,11 +91,7 @@ contract NFTRentalVault is ReentrancyGuard, Pausable, Ownable, ERC1155Holder {
     /// @dev    Checks-Effects-Interactions: the rental state is written before
     ///         the MANA transfer; payment is credited to the owner's pull
     ///         balance rather than pushed.
-    function rent(uint256 equipmentId, uint64 durationDays)
-        external
-        nonReentrant
-        whenNotPaused
-    {
+    function rent(uint256 equipmentId, uint64 durationDays) external nonReentrant whenNotPaused {
         Listing storage l = listings[equipmentId];
         require(l.active, "Rental: not listed");
         require(durationDays > 0 && durationDays <= l.maxDuration, "Rental: bad duration");
@@ -160,11 +150,7 @@ contract NFTRentalVault is ReentrancyGuard, Pausable, Ownable, ERC1155Holder {
     }
 
     /// @notice Quote the MANA cost to rent for `durationDays` days.
-    function quoteRent(uint256 equipmentId, uint64 durationDays)
-        external
-        view
-        returns (uint256)
-    {
+    function quoteRent(uint256 equipmentId, uint64 durationDays) external view returns (uint256) {
         return listings[equipmentId].pricePerDay * durationDays;
     }
 

@@ -30,11 +30,7 @@ contract GameRegistryV2 is GameRegistryV1 {
         emit AchievementUnlocked(player, achievementId);
     }
 
-    function hasAchievement(address player, uint256 achievementId)
-        external
-        view
-        returns (bool)
-    {
+    function hasAchievement(address player, uint256 achievementId) external view returns (bool) {
         return _achievements[player] & (uint256(1) << achievementId) != 0;
     }
 

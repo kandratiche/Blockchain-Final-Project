@@ -35,9 +35,9 @@ contract GameDAO is
     constructor(IVotes token, TimelockController timelock)
         Governor("GameDAO")
         GovernorSettings(
-            1 days,        // voting delay
-            1 weeks,       // voting period
-            10_000e18      // proposal threshold — 1% of 1,000,000 RLM supply
+            1 days, // voting delay
+            1 weeks, // voting period
+            10_000e18 // proposal threshold — 1% of 1,000,000 RLM supply
         )
         GovernorVotes(token)
         GovernorVotesQuorumFraction(4) // 4% quorum
@@ -45,49 +45,24 @@ contract GameDAO is
     {}
 
     // ─── Settings overrides ───────────────────────────────────────────────────
-    function votingDelay()
-        public
-        view
-        override(Governor, GovernorSettings)
-        returns (uint256)
-    {
+    function votingDelay() public view override(Governor, GovernorSettings) returns (uint256) {
         return super.votingDelay();
     }
 
-    function votingPeriod()
-        public
-        view
-        override(Governor, GovernorSettings)
-        returns (uint256)
-    {
+    function votingPeriod() public view override(Governor, GovernorSettings) returns (uint256) {
         return super.votingPeriod();
     }
 
-    function proposalThreshold()
-        public
-        view
-        override(Governor, GovernorSettings)
-        returns (uint256)
-    {
+    function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
         return super.proposalThreshold();
     }
 
-    function quorum(uint256 timepoint)
-        public
-        view
-        override(Governor, GovernorVotesQuorumFraction)
-        returns (uint256)
-    {
+    function quorum(uint256 timepoint) public view override(Governor, GovernorVotesQuorumFraction) returns (uint256) {
         return super.quorum(timepoint);
     }
 
     // ─── Timelock-control overrides (OZ v5 API) ───────────────────────────────
-    function state(uint256 proposalId)
-        public
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (ProposalState)
-    {
+    function state(uint256 proposalId) public view override(Governor, GovernorTimelockControl) returns (ProposalState) {
         return super.state(proposalId);
     }
 
@@ -129,12 +104,7 @@ contract GameDAO is
         return super._cancel(targets, values, calldatas, descriptionHash);
     }
 
-    function _executor()
-        internal
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (address)
-    {
+    function _executor() internal view override(Governor, GovernorTimelockControl) returns (address) {
         return super._executor();
     }
 }

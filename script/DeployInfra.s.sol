@@ -24,20 +24,19 @@ import "../src/PriceOracle.sol";
 ///   RLM_TOKEN     – RealmToken address (ERC-4626 vault underlying asset)
 ///   PRICE_FEED    – Chainlink aggregator address for the PriceOracle
 contract DeployInfra is Script {
-    uint256 constant XP_PER_LEVEL  = 1000;  // GameRegistry progression curve
+    uint256 constant XP_PER_LEVEL = 1000; // GameRegistry progression curve
     uint256 constant MAX_STALENESS = 1 hours; // PriceOracle freshness window
 
     function run() external {
-        address admin    = vm.envAddress("ADMIN_ADDRESS");
+        address admin = vm.envAddress("ADMIN_ADDRESS");
         address rlmToken = vm.envAddress("RLM_TOKEN");
-        address feed     = vm.envAddress("PRICE_FEED");
+        address feed = vm.envAddress("PRICE_FEED");
 
         vm.startBroadcast();
 
         // 1. UUPS GameRegistry — implementation + ERC-1967 proxy.
         GameRegistryV1 registryImpl = new GameRegistryV1();
-        bytes memory initData =
-            abi.encodeCall(GameRegistryV1.initialize, (admin, XP_PER_LEVEL));
+        bytes memory initData = abi.encodeCall(GameRegistryV1.initialize, (admin, XP_PER_LEVEL));
         ERC1967Proxy registryProxy = new ERC1967Proxy(address(registryImpl), initData);
 
         // 2. Guild factory (CREATE + CREATE2).

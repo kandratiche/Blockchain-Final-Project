@@ -14,7 +14,7 @@ contract RealmStakeVaultTest is Test {
     RealmStakeVault vault;
 
     address alice = address(0xA1);
-    address bob   = address(0xB1);
+    address bob = address(0xB1);
 
     function setUp() public {
         asset = new RealmToken(address(this));
@@ -123,10 +123,6 @@ contract RealmStakeVaultTest is Test {
 
         // The attack must never be profitable: the attacker can never redeem
         // more than the assets they sank into the vault.
-        assertLe(
-            vault.previewRedeem(attackerShares),
-            attackerCost,
-            "inflation attack must not profit"
-        );
+        assertLe(vault.previewRedeem(attackerShares), attackerCost, "inflation attack must not profit");
     }
 }

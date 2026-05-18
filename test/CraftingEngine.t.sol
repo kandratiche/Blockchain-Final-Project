@@ -12,7 +12,7 @@ contract CraftingEngineTest is Test {
     GameItems items;
     CraftingEngine crafting;
 
-    address dao    = address(0xDA0);
+    address dao = address(0xDA0);
     address player = address(0xC1);
     address outsider = address(0xC2);
 
@@ -21,7 +21,7 @@ contract CraftingEngineTest is Test {
     uint256 MANA;
 
     uint256 constant RECIPE_ID = 1;
-    uint256 constant MANA_FEE  = 5;
+    uint256 constant MANA_FEE = 5;
 
     function setUp() public {
         // GameItems admin = this test contract, so it can grant roles.
@@ -44,8 +44,10 @@ contract CraftingEngineTest is Test {
     function _createDefaultRecipe() internal {
         uint256[] memory ids = new uint256[](2);
         uint256[] memory amts = new uint256[](2);
-        ids[0] = IRON; amts[0] = 10;
-        ids[1] = WOOD; amts[1] = 5;
+        ids[0] = IRON;
+        amts[0] = 10;
+        ids[1] = WOOD;
+        amts[1] = 5;
         vm.prank(dao);
         crafting.createRecipe(RECIPE_ID, ids, amts, "Iron Sword", 2, 120);
     }
@@ -68,7 +70,8 @@ contract CraftingEngineTest is Test {
     function test_createRecipe_revertsOnDuplicate() public {
         uint256[] memory ids = new uint256[](1);
         uint256[] memory amts = new uint256[](1);
-        ids[0] = IRON; amts[0] = 1;
+        ids[0] = IRON;
+        amts[0] = 1;
         vm.prank(dao);
         vm.expectRevert("Crafting: recipe exists");
         crafting.createRecipe(RECIPE_ID, ids, amts, "Dup", 1, 1);
@@ -85,7 +88,8 @@ contract CraftingEngineTest is Test {
     function test_createRecipe_revertsOnBadTier() public {
         uint256[] memory ids = new uint256[](1);
         uint256[] memory amts = new uint256[](1);
-        ids[0] = IRON; amts[0] = 1;
+        ids[0] = IRON;
+        amts[0] = 1;
         vm.prank(dao);
         vm.expectRevert("Crafting: bad tier");
         crafting.createRecipe(2, ids, amts, "Bad", 6, 1);
@@ -94,7 +98,8 @@ contract CraftingEngineTest is Test {
     function test_createRecipe_revertsOnNonResource() public {
         uint256[] memory ids = new uint256[](1);
         uint256[] memory amts = new uint256[](1);
-        ids[0] = 1000; amts[0] = 1;
+        ids[0] = 1000;
+        amts[0] = 1;
         vm.prank(dao);
         vm.expectRevert("Crafting: not a resource");
         crafting.createRecipe(2, ids, amts, "Bad", 1, 1);
@@ -103,7 +108,8 @@ contract CraftingEngineTest is Test {
     function test_createRecipe_onlyDao() public {
         uint256[] memory ids = new uint256[](1);
         uint256[] memory amts = new uint256[](1);
-        ids[0] = IRON; amts[0] = 1;
+        ids[0] = IRON;
+        amts[0] = 1;
         vm.prank(outsider);
         vm.expectRevert();
         crafting.createRecipe(2, ids, amts, "X", 1, 1);
@@ -113,7 +119,8 @@ contract CraftingEngineTest is Test {
     function test_updateRecipe_changesOutput() public {
         uint256[] memory ids = new uint256[](1);
         uint256[] memory amts = new uint256[](1);
-        ids[0] = MANA; amts[0] = 3;
+        ids[0] = MANA;
+        amts[0] = 3;
         vm.prank(dao);
         crafting.updateRecipe(RECIPE_ID, ids, amts, "Mana Staff", 4, 300);
 
@@ -125,7 +132,8 @@ contract CraftingEngineTest is Test {
     function test_updateRecipe_revertsIfMissing() public {
         uint256[] memory ids = new uint256[](1);
         uint256[] memory amts = new uint256[](1);
-        ids[0] = IRON; amts[0] = 1;
+        ids[0] = IRON;
+        amts[0] = 1;
         vm.prank(dao);
         vm.expectRevert("Crafting: no recipe");
         crafting.updateRecipe(999, ids, amts, "X", 1, 1);
@@ -227,8 +235,10 @@ contract CraftingEngineTest is Test {
 
         uint256[] memory ids = new uint256[](2);
         uint256[] memory amts = new uint256[](2);
-        ids[0] = IRON; amts[0] = ironReq;
-        ids[1] = WOOD; amts[1] = woodReq;
+        ids[0] = IRON;
+        amts[0] = ironReq;
+        ids[1] = WOOD;
+        amts[1] = woodReq;
         vm.prank(dao);
         crafting.createRecipe(7, ids, amts, "Fuzzed", 3, 50);
 

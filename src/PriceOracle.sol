@@ -10,13 +10,7 @@ interface AggregatorV3Interface {
     function latestRoundData()
         external
         view
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        );
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);
 }
 
 /// @title PriceOracle
@@ -48,7 +42,7 @@ contract PriceOracle is Ownable {
 
     /// @notice Latest price with its decimals. Reverts on a stale or bad answer.
     function getPrice() public view returns (uint256 price, uint8 priceDecimals) {
-        (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+        (, int256 answer,, uint256 updatedAt,) = feed.latestRoundData();
 
         if (answer <= 0) revert InvalidPrice(answer);
         if (block.timestamp - updatedAt > maxStaleness) {
